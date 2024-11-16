@@ -4,8 +4,7 @@ longform:
   title: SVDoc
   workflow: Default Workflow
   sceneFolder: /
-  scenes:
-    - Introduction
+  scenes: []
   sceneTemplate: quartz/templates/chapter.md
   ignoredFiles: []
 ---

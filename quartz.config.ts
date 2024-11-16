@@ -8,8 +8,8 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "🪴 Quartz 4.0",
-    pageTitleSuffix: "",
+    pageTitle: "SystemVerilog Documentation",
+    pageTitleSuffix: "Portal for all things SystemVerilog",
     enableSPA: true,
     enablePopovers: true,
     analytics: {

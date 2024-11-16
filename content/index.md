@@ -1,7 +1,10 @@
 ---
-title: Welcome to SV Docs!!!
+title: Welcome to SV Docs!
 
-![alt text][def]
+This website was built as there were no consolidated resources on SystemVerilog
+
+To Navigate, Click on Explorer.
+
 ---
 
 

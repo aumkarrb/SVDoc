@@ -329,7 +329,6 @@ task run();
   
   ```
 ## Understanding Semaphore
-
 ```
 class first;
 
@@ -407,3 +406,182 @@ endmodule
 ```
 
 ## Understanding Mailbox
+```
+class generator; 
+int data = 56; 
+mailbox mbx; ///gen2drv
+
+task run(); 
+  mbx.put(data); 
+  $display("[GEN]: SENT DATA: %0d", data);
+endtask
+
+
+endclass
+
+class driver;
+int datac = 0;
+mailbox mbx; 
+
+task run(); 
+  mbx.get(datac);
+  $display("[DRV]: RCVD Data; %0d", datac);
+
+endclass
+
+
+module tb; 
+
+generator gen; 
+driver drv; 
+mailbox mbx; 
+
+initial begin
+gen = new();
+drv = new(); 
+mbx = new();
+
+gen.mbx = mbx; 
+drv.mbx = mbx; 
+
+gen.run();
+drv.run();
+
+end
+
+endmodule
+
+```
+
+## Specifying Mailbox with Custom Constructor
+```
+class generator; 
+int data = 56; 
+mailbox mbx; ///gen2drv
+
+function new(malbox mbx);
+this.mbx = mbx;
+endfunction
+
+task run(); 
+  mbx.put(data); 
+  $display("[GEN]: SENT DATA: %0d", data);
+endtask
+
+
+endclass
+
+class driver;
+int datac = 0;
+mailbox mbx; 
+
+function new(malbox mbx);
+this.mbx = mbx;
+endfunction
+
+task run(); 
+  mbx.get(datac);
+  $display("[DRV]: RCVD Data; %0d", datac);
+
+endclass
+
+
+module tb; 
+
+generator gen; 
+driver drv; 
+mailbox mbx; 
+
+initial begin
+mbx = new();
+
+gen = new(mbx);
+drv = new(mbx); 
+
+
+
+gen.mbx = mbx; 
+drv.mbx = mbx; 
+
+gen.run();
+drv.run();
+
+end
+
+endmodule
+```
+
+## Sending Transaction data with Mailbox
+
+```
+class transaction;
+
+rand bit [3:0] din1; 
+rand bit [3:0] din2;
+bit [4:0] dout;
+
+endclass
+
+class generator;
+
+transaction t; 
+mailbox mbx; 
+
+function new(mailbox mbx);
+this.mbx = mbx;
+endfunction
+
+task main();
+
+for (int i = 0, i<10; i++) begin
+t = new(); 
+assert(t.randomize) else $display("Randomization Failed");
+$display("[GEN] : DATA SENT : din1 : %0d and din2 : %0d", t.din1, t.din2);
+mbx.put(t);
+#10;
+end
+endtask
+
+endclass
+
+class driver;
+
+transaction dc; 
+mailbox mbx;
+
+function new(mailbox mbx);
+this.mbx = mbx;
+endfunction
+
+task main();
+forever begin
+mbx.get(dc);
+$display("[DRV] : DATA RCVD : din1 : %0d and din2 : %0d, dc.din1, dc.din2);
+#10;
+end
+endtask
+
+endclass
+
+module tb;
+generator g;
+driver d;
+mailbox mbx;
+
+inital begin
+mbx = new();
+g = new(mbx);
+d = new(mbx);
+
+fork 
+g.main();
+d.main();
+join
+
+end
+
+```
+
+## Understanding Parameterized Mailbox
+```
+```

@@ -143,14 +143,12 @@ endinterface
 module tb;
 
 add_if aif();
-
 //add dut (aif.a, aif.b, aif.sum); //positional map
 add dut(.b(aif.b), .a(aif.a), .sum(aif.sum), .clk(aif.clk)); //mapping by name
 
 initial begin
 aif.clk = 0;
 end
-
 
 always #10 aif.clk = ~aif.clk;
 
@@ -176,4 +174,50 @@ $finish();
 end
 
 endmodule
+
 ```
+
+## Why we prefer LOGIC and WIRE over REG in Interface
+```
+module add(
+input [3:0] a,b,
+output [4:0] sum
+
+);
+
+
+assign sum = a + b;
+
+endmodule
+```
+
+```
+interface add_if;
+ wire [3:0] a;
+ wire [3:0] b;
+ wire [4:0] sum; 
+ 
+endinterface
+////// intefrace with all reg type, then we are not allowed to connect variable in interface to the output port of DUT
+///// interface with all wire type, we are not allowed to apply stimulus using initial or always
+
+module tb;
+
+add_if aif();
+
+add dut (aif.a, aif.b, aif.sum);  ////Positional Map
+
+initial begin
+aif.a = 1;
+aif.b = 3;
+
+
+end
+
+initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+
+endmodule
+```
+## Adding Driver Code to Interface

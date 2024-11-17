@@ -198,7 +198,7 @@ interface add_if;
  wire [4:0] sum; 
  
 endinterface
-////// intefrace with all reg type, then we are not allowed to connect variable in interface to the output port of DUT
+////// interface with all reg type, then we are not allowed to connect variable in interface to the output port of DUT
 ///// interface with all wire type, we are not allowed to apply stimulus using initial or always
 
 module tb;
@@ -221,3 +221,58 @@ $dumpvars;
 endmodule
 ```
 ## Adding Driver Code to Interface
+```
+module add(
+input [3:0] a,b,
+output reg [4:0] sum, 
+input clk
+);
+
+always @(posedge clk)
+ begin
+   sum <= a + b; 
+   end
+endmodule
+```
+```
+interface add_if;
+logic [3:0] a,b;
+logic [4:0] sum;
+logic clk;
+endinterface
+
+class driver;
+
+virtual add_if aif;
+
+task run();
+forever begin
+ @(posedge aif.clk);
+aif.a <= 3;
+aif,b <= 3;
+end
+endtask
+
+endclass
+
+
+module tb;
+add_if aif();
+
+add dut(.a(aif.a),.b(aif.b), .sum(aif.sum), .clk(aif.clk));
+
+initial begin
+aif.clk <= 0;
+end
+
+always #10 aif.clk <= ~aif.clk;
+
+
+initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+#100;
+$finish();
+end
+endmodule
+```

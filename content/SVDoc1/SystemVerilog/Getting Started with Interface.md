@@ -267,6 +267,13 @@ end
 
 always #10 aif.clk <= ~aif.clk;
 
+driver drv;
+
+initial begin
+drv = new();
+drv.aif = aif;
+drv.run();
+end
 
 initial begin
 $dumpfile("dump.vcd");

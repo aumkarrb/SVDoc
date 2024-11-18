@@ -1,7 +1,7 @@
 ---
 longform:
   format: scenes
-  title: SVDoc
+  title: SVDoc1
   workflow: Default Workflow
   sceneFolder: /
   scenes: []

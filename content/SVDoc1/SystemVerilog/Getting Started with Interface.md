@@ -391,7 +391,6 @@ copy = new();
 copy.a = this.a;
 copy.b = this.b;
 copy.sum = this.sum;
-
 endfunction
 
 endclass
@@ -401,7 +400,7 @@ class generator;
 
  transaction trans;
  mailbox #(transaction) mbx;
- int i = 0;
+ event done;
  
 function new(mailbox #(transaction) mbx);
  this.mbx = mbx;
@@ -409,37 +408,92 @@ function new(mailbox #(transaction) mbx);
 endfunction
 
 function transaction copy();
- copy = new();
- copy.a = this.a;
- copy.b = this.b;
- endfunction
-
 
 task run();
   //trans = new();
- for(i = 0; i<10, i++) begin
-     assert(trans.randomize()) else $display("Randomization Failed") ;
+ for(int i = 0; i<10, i++) begin
+     trans.randomize(); 
+     mbx.put(trans.copy);
      $display("[GEN] : DATA SENT TO DRIVER");
      trans.display();
-     mbx.put(trans.copy);
+     #20;
   end
-  
+  -> done;
   endtask
 
 
 endclass
 
+interface add_if; 
+logic [3:0] a; 
+logic [3:0] b; 
+logic [4:0] sum; 
+logic clk; 
+endinterface
+
+class driver; 
+
+virtual add_if aif;
+mailbox #(transaction) mbx;
+transaction data; 
+event next; 
+
+function new(mailbox #(transaction) mbx);
+ this.mbx = mbx; 
+endfunction
+ 
+
+task run();
+ forever begin
+ mbx.get(data);
+  @(posedge aif.clk);
+  aif.a <= data.a;
+  aif.b <= data.b;
+  $display("[DRV] : Interface Trigger");
+  data.display();
+ end
+ endtask
+ 
+endclasss
+
 module tb;
 
-generator gen; 
+add_if aif();
+driver drv;
+generator gen;
+event done;
+
 mailbox #(transaction) mbx;
+
+add dut (aif.a, aif.b, aif.sum, aif.clk );
+
+initial begin
+aif.clk <= 0;
+end
+
+always #10 aif.clk <= ~aif.clk;
 
 initial begin
  mbx = new();
+ drv = new(mbx); 
  gen = new(mbx);
- gen.run();
- end
+ drv.aif = aif;
+ done = gen.done;
+end
 
+initial begin 
+fork
+  gen.run();
+  drv.run();
+join_none
+ wait(done.triggered);
+ $finish();
+end
+
+initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+end 
 endmodule
 
 ```

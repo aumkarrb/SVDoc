@@ -356,3 +356,82 @@ end
 endmodule
 
 ```
+
+## Adding Generator
+```
+module add(
+input [3:0] a,b,
+output reg [4:0] sum, 
+input clk
+);
+
+always @(posedge clk)
+ begin
+   sum <= a + b; 
+   end
+endmodule
+```
+```
+////1.add transaction constructor in generator custom constructor 
+////2.Send deep copy of transaction between generator and driver 
+
+
+class transaction;
+
+ randc bit [3:0] a; 
+ randc bit [3:0] b;
+ bit [4:0] sum;
+
+function void display();
+ $display("a : %0d \t b: %0d \t sum : %0d",a,b,sum)
+endfunction
+
+endclass
+
+
+class generator; 
+
+ transaction trans;
+ mailbox #(transaction) mbx;
+ int i = 0;
+ 
+function new(mailbox #(transaction) mbx);
+ this.mbx = mbx;
+ trans = new();
+endfunction
+
+function transaction copy();
+ copy = new();
+ copy.a = this.a;
+ copy.b = this.b;
+ endfunction
+
+
+task run();
+  //trans = new();
+ for(i = 0; i<10, i++) begin
+     assert(trans.randomize()) else $display("Randomization Failed") ;
+     $display("[GEN] : DATA SENT TO DRIVER");
+     trans.display();
+     mbx.put(trans.copy);
+  end
+  
+  endtask
+
+
+endclass
+
+module tb;
+
+generator gen; 
+mailbox #(transaction) mbx;
+
+initial begin
+ mbx = new();
+ gen = new(mbx);
+ gen.run();
+ end
+
+endmodule
+
+```

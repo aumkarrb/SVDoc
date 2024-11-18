@@ -499,8 +499,8 @@ endmodule
 ```
 
 ## Injecting Error
-![[Pasted image 20241118231837.png]]
 
+![[Pasted image 20241118233437.png]]
 ```
 module add(
 input [3:0] a,b,

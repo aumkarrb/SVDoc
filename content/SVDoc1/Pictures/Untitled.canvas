@@ -25,7 +25,8 @@
 		{"id":"d668e44627a0e433","type":"text","text":"Global Signals: Reset and Clock","x":-265,"y":1280,"width":285,"height":60},
 		{"id":"b217589a5d5f2fd7","type":"text","text":"Data Signals: WDATA, RDATA\nControl Data: WR, EN, CE, CS","x":-265,"y":1360,"width":285,"height":100},
 		{"id":"87ea34ca1230248c","type":"text","text":"Global Signal -> Testbench Top\n\nDATA and Control Signals -> Generator (Pseudo Random Number Generator)","x":70,"y":1280,"width":370,"height":160},
-		{"id":"71bfe14f55392435","x":-247,"y":1740,"width":447,"height":160,"type":"text","text":"Generator Class -> task main();\nDriver Class -> task main();\nMonitor Class -> task main();\nScoreboard Class -> task main();\nEnvironment Class -> task main();\n"}
+		{"id":"71bfe14f55392435","type":"text","text":"Generator Class -> task main();\nDriver Class -> task main();\nMonitor Class -> task main();\nScoreboard Class -> task main();\nEnvironment Class -> task main();\n","x":-247,"y":1740,"width":447,"height":160},
+		{"id":"d0475590e204a5d9","x":380,"y":1620,"width":300,"height":120,"type":"text","text":"Operator used to add value to data member of transaction must be \"=\""}
 	],
 	"edges":[
 		{"id":"93d029f3631c07e4","fromNode":"6cf94f95ab5d3757","fromSide":"right","toNode":"b06cbef05c4d379e","toSide":"left"},

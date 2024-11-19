@@ -1,5 +1,5 @@
 ---
 
-title: SV Docs - Portal for Everything SystemVerilog
+title: SV Docs 
 
 ---
